@@ -214,3 +214,21 @@ def get_forward_sources(data: dict) -> dict:
 
     return sorted_forward_sources_count
 
+
+def count_replies(data: dict) -> int:
+    """
+    Count all replies in the JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - reply_count (int): The total number of replies.
+    """
+    reply_count = 0
+
+    for message in data.get('messages', []):
+        if 'reply_to_message_id' in message:
+            reply_count += 1
+
+    return reply_count
