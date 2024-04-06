@@ -415,3 +415,42 @@ def get_most_active_users(data: dict, top_n: int = 10) -> list:
     top_active_users = [{'user': user, 'message_count': count} for user, count in sorted_users]
 
     return top_active_users
+
+
+def get_average_message_length(data):
+    total_length = 0
+    total_messages = 0
+
+    for message in data.get('messages', []):
+        text = message.get('text', '')
+        total_length += len(text)
+        total_messages += 1
+
+    if total_messages == 0:
+        return 0
+
+    average_length = total_length / total_messages
+    return average_length
+
+
+
+
+def each_average_message_length(data: dict) -> dict:
+    from collections import defaultdict
+    user_lengths = defaultdict(int)
+    user_counts = defaultdict(int)
+
+    for message in data.get('messages', []):
+        if 'from' in message:
+            message_text = message.get('text', '')
+            message_length = len(message_text) if isinstance(message_text, str) else sum(len(part['text']) for part in message_text if isinstance(part, dict))
+            user_lengths[message['from']] += message_length
+            user_counts[message['from']] += 1
+
+    
+    average_lengths = {user: user_lengths[user] / user_counts[user] for user in user_lengths}
+    return average_lengths
+
+average = each_average_message_length(load_json())
+for user, average_length in average.items():
+    print(f'{user}: {average_length:.2f} characters')
