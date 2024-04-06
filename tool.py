@@ -451,6 +451,24 @@ def each_average_message_length(data: dict) -> dict:
     average_lengths = {user: user_lengths[user] / user_counts[user] for user in user_lengths}
     return average_lengths
 
-average = each_average_message_length(load_json())
-for user, average_length in average.items():
-    print(f'{user}: {average_length:.2f} characters')
+
+def get_most_active_hours(data: dict) -> Counter:
+    """
+    Calculates the most active hours in the Telegram group.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+
+    Returns:
+    - active_hours (Counter): A Counter object with hours as keys and message counts as values.
+    """
+
+    active_hours = Counter()
+
+
+    for message in data.get('messages', []):
+    
+        message_date = datetime.fromisoformat(message['date'])
+        active_hours[message_date.hour] += 1
+
+    return active_hours.most_common()
