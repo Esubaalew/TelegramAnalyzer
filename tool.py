@@ -531,3 +531,72 @@ def get_most_active_months(data: dict) -> Counter:
         active_months[message_date.strftime('%Y-%m')] += 1
 
     return active_months.most_common()
+
+def get_user_activity(data: dict) -> dict:
+    """
+    Analyzes the activity of each user in the Telegram group based on different time dimensions.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+
+    Returns:
+    - user_activity (dict): Dictionary containing user activity information.
+    """
+
+    user_activity = defaultdict(lambda: defaultdict(Counter)) 
+
+    for message in data.get('messages', []):
+        sender = message.get('from', 'Deleted Account')  
+        timestamp = message.get('date')
+        if sender and timestamp:
+            message_date = datetime.fromisoformat(timestamp)
+            hour = message_date.hour
+            day = message_date.strftime('%Y-%m-%d')
+            weekday = message_date.strftime('%A')
+            month = message_date.strftime('%Y-%m')
+
+           
+            user_activity[sender]['Hour'][hour] += 1
+            user_activity[sender]['Day'][day] += 1
+            user_activity[sender]['Weekday'][weekday] += 1
+            user_activity[sender]['Month'][month] += 1
+
+
+    formatted_user_activity = {}
+    for user, activity_info in user_activity.items():
+        formatted_activity_info = {}
+        for time_dimension, counts in activity_info.items():
+            most_active_info = counts.most_common(1)
+            if most_active_info:
+                most_active_time = most_active_info[0][0]
+                most_active_count = most_active_info[0][1]
+            else:
+                most_active_time = 'N/A'
+                most_active_count = 0
+            formatted_activity_info[time_dimension] = {
+                'most_active': most_active_time,
+                'messages': most_active_count
+            }
+    
+        overall_activity = sum(sum(counter.values()) for counter in activity_info.values())
+        formatted_activity_info['Overall'] = {
+            'most_active': 'N/A' if overall_activity == 0 else 'Overall',
+            'messages': overall_activity
+        }
+        formatted_user_activity[user] = formatted_activity_info
+
+    return formatted_user_activity
+
+# Example usage:
+data = load_json('result.json')
+user_activity = get_user_activity(data)
+print(user_activity)
+
+# Print user activity information
+# for user, activity_info in user_activity.items():
+#     print(f"User: {user}")
+#     for time_dimension, counts in activity_info.items():
+#         most_active_time = counts['most_active']
+#         most_active_count = counts['messages']
+#         print(f"Most active {time_dimension}: {most_active_time} (Messages: {most_active_count})")
+#     print()
