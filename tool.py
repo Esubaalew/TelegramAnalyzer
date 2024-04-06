@@ -588,9 +588,9 @@ def get_user_activity(data: dict) -> dict:
     return formatted_user_activity
 
 # Example usage:
-data = load_json('result.json')
-user_activity = get_user_activity(data)
-print(user_activity)
+# data = load_json('result.json')
+# user_activity = get_user_activity(data)
+# print(user_activity)
 
 # Print user activity information
 # for user, activity_info in user_activity.items():
