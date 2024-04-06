@@ -47,3 +47,55 @@ def visualize_senders_pie(data: dict, top_n: int = 10):
     plt.title(f'Proportion of Messages Sent by Top {top_n} Senders')
     plt.axis('equal')
     plt.show()
+
+def visualize_senders_line(data: dict, top_n: int = 10):
+    """
+    Visualize the number of messages sent by each sender using a line plot.
+
+    Args:
+    - data (dict): The JSON data.
+    - top_n (int): The number of top senders to include. Defaults to 10.
+    """
+
+    senders_ranked = get_senders(data)[:top_n]
+
+    
+    senders = [sender['sender'] for sender in senders_ranked]
+    message_counts = [sender['messages'] for sender in senders_ranked]
+
+  
+    plt.figure(figsize=(10, 6))
+    plt.plot(senders, message_counts, marker='o', linestyle='-', color='b')
+    plt.xlabel('Sender')
+    plt.ylabel('Number of Messages')
+    plt.title(f'Number of Messages Sent by Top {top_n} Senders')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def visualize_senders_scatter(data: dict, top_n: int = 10):
+    """
+    Visualize the number of messages sent by each sender using a scatter plot.
+
+    Args:
+    - data (dict): The JSON data.
+    - top_n (int): The number of top senders to include. Defaults to 10.
+    """
+   
+    senders_ranked = get_senders(data)[:top_n]
+
+    
+    senders = [sender['sender'] for sender in senders_ranked]
+    message_counts = [sender['messages'] for sender in senders_ranked]
+
+  
+    plt.figure(figsize=(10, 6))
+    plt.scatter(senders, message_counts, color='b', alpha=0.7)
+    plt.xlabel('Sender')
+    plt.ylabel('Number of Messages')
+    plt.title(f'Number of Messages Sent by Top {top_n} Senders')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
