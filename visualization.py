@@ -1,7 +1,8 @@
+from datetime import datetime
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-from tool import get_most_active_hours, get_most_active_users, load_json, get_senders, each_average_message_length
+from tool import get_most_active_days, get_most_active_hours, get_most_active_users, get_most_active_weekdays, load_json, get_senders, each_average_message_length
 
 def visualize_most_active_users(data: dict, top_n: int = 10):
     """
@@ -175,3 +176,54 @@ def visualize_most_active_hours(data: dict):
 
     plt.show()
 
+
+def visualize_activity_over_time(data: dict):
+    """
+    Visualize the change in activity over time from the oldest day to the newest day using a line plot.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+    """
+ 
+    active_days = get_most_active_days(data)
+
+   
+    days = [datetime.strptime(day, '%Y-%m-%d') for day, count in active_days]
+    counts = [count for day, count in active_days]
+
+    # Plot the line plot
+    plt.figure(figsize=(12, 6))
+    plt.plot(days, counts, marker='o', linestyle='-')
+
+    plt.xlabel('Date')
+    plt.ylabel('Message Count')
+    plt.title('Change in Activity Over Time')
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+def visualize_most_active_weekdays_pie(data: dict):
+    """
+    Visualize the distribution of message activity across different weekdays using a pie chart.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+    """
+   
+    active_weekdays = get_most_active_weekdays(data)
+
+   
+    weekdays = [day for day, count in active_weekdays]
+    counts = [count for day, count in active_weekdays]
+
+    # Plot the pie chart
+    plt.figure(figsize=(8, 8))
+    plt.pie(counts, labels=weekdays, autopct='%1.1f%%', startangle=140, colors=plt.cm.tab10.colors)
+    plt.title('Distribution of Message Activity Across Weekdays')
+    plt.axis('equal') 
+
+    plt.show()
+
+
+data = load_json('result.json')
+visualize_most_active_weekdays_pie(data)
