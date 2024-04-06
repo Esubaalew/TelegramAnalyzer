@@ -168,8 +168,6 @@ def get_forwarded_messages(data: dict) -> list:
     return forwarded_messages
 
 
-from collections import defaultdict
-
 def get_forwarders(data: dict) -> dict:
     """
     Get a ranking of forwarders based on the number of messages they forwarded.
@@ -185,6 +183,7 @@ def get_forwarders(data: dict) -> dict:
     for message in data.get('messages', []):
         if 'forwarded_from' in message:
             forwarder = message['from']
+            forwarder = forwarder if forwarder is not None else 'Deleted Account'
             forwarder_count[forwarder] += 1
 
     forwarder_ranking = dict(sorted(forwarder_count.items(), key=lambda x: x[1], reverse=True))
@@ -207,9 +206,9 @@ def get_forward_sources(data: dict) -> dict:
     for message in data.get('messages', []):
         if 'forwarded_from' in message:
             forward_source = message['forwarded_from']
+            forward_source = forward_source if forward_source is not None else 'Deleted Account'
             forward_sources_count[forward_source] += 1
 
-    
     sorted_forward_sources_count = dict(sorted(forward_sources_count.items(), key=lambda x: x[1], reverse=True))
 
     return sorted_forward_sources_count
@@ -251,3 +250,24 @@ def get_replies(data: dict) -> list:
             replies.append(message)
 
     return replies
+
+
+def get_repliers(data: dict) -> dict:
+    """
+    Get a ranking of repliers based on the number of messages they replied to.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - replier_ranking (dict): Dictionary containing repliers ranked by the number of messages they replied to.
+    """
+    replier_count = defaultdict(int)
+
+    for message in data.get('messages', []):
+        replier = message.get('from', 'Deleted Account') if message.get('from') is not None else 'Deleted Account'
+        if 'reply_to_message_id' in message:
+            replier_count[replier] += 1
+
+    replier_ranking = dict(sorted(replier_count.items(), key=lambda x: x[1], reverse=True))
+    return replier_ranking
