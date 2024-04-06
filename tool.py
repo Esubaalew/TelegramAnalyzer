@@ -89,3 +89,23 @@ def extract_date_info(message: dict) -> dict:
     }
 
     return date_info
+
+def get_latest_message(data: dict) -> dict:
+    """
+    Retrieves the latest message from the JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - latest_message (dict): Dictionary containing the latest message with full timestamp.
+    """
+    latest_message = {'date': '0000-01-01T00:00:00'}
+    
+
+    for message in data.get('messages', []):
+        if 'date' in message and message['date'] > latest_message['date']:
+            latest_message = message
+
+    latest_message['date'] = extract_date_info(latest_message)
+    return latest_message
