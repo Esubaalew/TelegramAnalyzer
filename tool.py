@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 from collections import defaultdict
+from collections import Counter
+import re
 
 def load_json(file_path: str = 'result.json') -> dict:
     """
@@ -357,3 +359,39 @@ def get_longest_messages(data: dict) -> list:
                 longest_messages.append({'text': text, 'sender': message.get('from', 'Unknown')})
 
     return longest_messages
+
+def get_most_common_words(data: dict, top_n=10) -> list:
+    """
+    Get the top N most common single words in the text key of messages, excluding forwarded messages.
+
+    Args:
+    - data (dict): The JSON data.
+    - top_n (int): Number of top words to return.
+
+    Returns:
+    - most_common_words (list): List of dictionaries containing the top N most common single words along with their occurrences.
+    """
+    words_count = Counter()
+
+    for message in data.get('messages', []):
+        if 'forwarded_from' not in message: 
+            text = message.get('text', '')
+            if isinstance(text, list):  
+                text = ' '.join(str(item) for item in text if isinstance(item, str))
+            elif isinstance(text, dict): 
+               
+                text = str(text)
+            
+            words = re.findall(r'\b\w+\b', text.lower())
+            words_count.update(words)
+
+    most_common_words = words_count.most_common(top_n)
+    top_words_list = []
+    for word, count in most_common_words:
+        top_words_list.append({'word': word, 'occurrence': count})
+    return top_words_list
+
+data = load_json('result.json')
+most_common_words = get_most_common_words(data)
+for word in most_common_words:
+    print(f"{word['word']}: {word['occurrence']}")
