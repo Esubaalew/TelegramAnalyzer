@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from tool import get_most_active_users, load_json, get_senders
+from tool import get_most_active_users, load_json, get_senders, each_average_message_length
 
 def visualize_most_active_users(data: dict, top_n: int = 10):
     """
@@ -99,3 +99,35 @@ def visualize_senders_scatter(data: dict, top_n: int = 10):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+
+
+
+def visualize_average_message_length(data: dict, top_n: int = 10):
+    """
+    Visualize the average message length for each user using a bar chart.
+
+    Args:
+    - data (dict): The JSON data.
+    - top_n (int): The number of top users to include. Defaults to 10.
+    """
+   
+    average_lengths = each_average_message_length(data)
+
+    
+    sorted_users = sorted(average_lengths.items(), key=lambda x: x[1], reverse=True)[:top_n]
+
+    
+    users = [user[0] for user in sorted_users]
+    lengths = [user[1] for user in sorted_users]
+
+  
+    plt.figure(figsize=(10, 6))
+    plt.barh(users, lengths, color='skyblue')
+    plt.xlabel('Average Message Length')
+    plt.ylabel('User')
+    plt.title(f'Top {top_n} Users by Average Message Length')
+    plt.gca().invert_yaxis() 
+    plt.grid(axis='x', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
+
