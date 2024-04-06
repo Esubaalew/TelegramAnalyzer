@@ -130,6 +130,38 @@ def get_senders_list(data: dict) -> list:
         unique_senders.add(sender_id)
 
 
-    senders_list = ['Deleted account' if sender is None else sender for sender in unique_senders]
+    senders_list = ['Deleted Account' if sender is None else sender for sender in unique_senders]
 
     return senders_list
+
+def count_forwarded_messages(data: dict) -> int:
+    """
+    Count the number of forwarded messages in the provided JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - count (int): The number of forwarded messages.
+    """
+    count = 0
+    for message in data.get('messages', []):
+        if 'forwarded_from' in message:
+            count += 1
+    return count
+
+def get_forwarded_messages(data: dict) -> list:
+    """
+    Extract all forwarded messages from the provided JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - forwarded_messages (list): List of dictionaries containing forwarded messages.
+    """
+    forwarded_messages = []
+    for message in data.get('messages', []):
+        if 'forwarded_from' in message:
+            forwarded_messages.append(message)
+    return forwarded_messages
