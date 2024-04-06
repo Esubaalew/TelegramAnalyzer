@@ -232,3 +232,22 @@ def count_replies(data: dict) -> int:
             reply_count += 1
 
     return reply_count
+
+
+def get_replies(data: dict) -> list:
+    """
+    Get a list of all messages that are replies to other messages from the JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - replies (list): List of all reply messages.
+    """
+    replies = []
+
+    for message in data.get('messages', []):
+        if 'reply_to_message_id' in message:
+            replies.append(message)
+
+    return replies
