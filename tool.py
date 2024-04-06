@@ -390,3 +390,28 @@ def get_most_common_words(data: dict, top_n=10) -> list:
     for word, count in most_common_words:
         top_words_list.append({'word': word, 'occurrence': count})
     return top_words_list
+
+def get_most_active_users(data: dict, top_n: int = 10) -> list:
+    """
+    Get the top N most active users based on the number of messages they sent, replacing None with "Deleted User".
+
+    Args:
+    - data (dict): The JSON data.
+    - top_n (int): The number of top users to return. Defaults to 10.
+
+    Returns:
+    - top_active_users (list): List of dictionaries containing information about the top active users.
+    """
+    user_message_count = defaultdict(int)
+
+    for message in data.get('messages', []):
+
+            sender = message.get('from')
+            if sender is None:  # Replace None with "Deleted User"
+                sender = "Deleted Account"
+            user_message_count[sender] += 1
+
+    sorted_users = sorted(user_message_count.items(), key=lambda x: x[1], reverse=True)[:top_n]
+    top_active_users = [{'user': user, 'message_count': count} for user, count in sorted_users]
+
+    return top_active_users
