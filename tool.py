@@ -112,28 +112,28 @@ def get_latest_message(data: dict) -> dict:
     return latest_message
 
 
-def get_senders_list(data: dict) -> list:
+def get_senders(data: dict) -> list:
     """
-    Extracts the list of unique senders from the JSON data.
+    Extracts the list of unique senders from the JSON data and ranks them by the number of messages they sent.
 
     Args:
     - data (dict): The JSON data.
 
     Returns:
-    - senders_list (list): List of unique senders.
+    - senders_ranked (list): List of dictionaries containing sender names and the total number of messages they sent.
     """
-    
-    unique_senders = set()
-
+    sender_count = defaultdict(int)
 
     for message in data.get('messages', []):
-        sender_id = message.get('from')
-        unique_senders.add(sender_id)
+        sender = message.get('from')
+        if sender is None:
+            sender_count['Deleted Account'] += 1
+        else:
+            sender_count[sender] += 1
 
-
-    senders_list = ['Deleted Account' if sender is None else sender for sender in unique_senders]
-
-    return senders_list
+    # Sort the senders by the number of messages they sent
+    senders_ranked = [{'sender': sender, 'messages': count} for sender, count in sorted(sender_count.items(), key=lambda x: x[1], reverse=True)]
+    return senders_ranked
 
 def count_forwarded_messages(data: dict) -> int:
     """
