@@ -332,3 +332,28 @@ def get_editors(data: dict) -> dict:
 
     editor_ranking = dict(sorted(editor_count.items(), key=lambda x: x[1], reverse=True))
     return editor_ranking
+
+def get_longest_messages(data: dict) -> list:
+    """
+    Get the messages with the longest text from the JSON data, excluding forwarded messages.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - longest_messages (list): List of dictionaries containing the text and sender of the messages with the longest text.
+    """
+    longest_messages = []
+    max_length = 0
+
+    for message in data.get('messages', []):
+        if 'forwarded_from' not in message:  # Exclude forwarded messages
+            text = message.get('text', '')
+            length = len(text)
+            if length > max_length:
+                longest_messages = [{'text': text, 'sender': message.get('from', 'Unknown')}]
+                max_length = length
+            elif length == max_length:
+                longest_messages.append({'text': text, 'sender': message.get('from', 'Unknown')})
+
+    return longest_messages
