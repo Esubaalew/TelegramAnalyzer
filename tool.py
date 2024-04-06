@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from collections import defaultdict
 
 def load_json(file_path: str = 'result.json') -> dict:
     """
@@ -188,3 +189,28 @@ def get_forwarders(data: dict) -> dict:
 
     forwarder_ranking = dict(sorted(forwarder_count.items(), key=lambda x: x[1], reverse=True))
     return forwarder_ranking
+
+def get_forward_sources(data: dict) -> dict:
+    """
+    Get a dictionary of users (forward sources) with the number of messages they are the source for,
+    sorted from largest to smallest based on the number of messages.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - forward_sources_count (dict): Dictionary of users with the number of messages they are the source for,
+                                    sorted from largest to smallest based on the number of messages.
+    """
+    forward_sources_count = defaultdict(int)
+
+    for message in data.get('messages', []):
+        if 'forwarded_from' in message:
+            forward_source = message['forwarded_from']
+            forward_sources_count[forward_source] += 1
+
+    
+    sorted_forward_sources_count = dict(sorted(forward_sources_count.items(), key=lambda x: x[1], reverse=True))
+
+    return sorted_forward_sources_count
+
