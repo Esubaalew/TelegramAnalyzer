@@ -165,3 +165,26 @@ def get_forwarded_messages(data: dict) -> list:
         if 'forwarded_from' in message:
             forwarded_messages.append(message)
     return forwarded_messages
+
+
+from collections import defaultdict
+
+def get_forwarders(data: dict) -> dict:
+    """
+    Get a ranking of forwarders based on the number of messages they forwarded.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - forwarder_ranking (dict): Dictionary containing forwarders ranked by the number of messages they forwarded.
+    """
+    forwarder_count = defaultdict(int)
+
+    for message in data.get('messages', []):
+        if 'forwarded_from' in message:
+            forwarder = message['from']
+            forwarder_count[forwarder] += 1
+
+    forwarder_ranking = dict(sorted(forwarder_count.items(), key=lambda x: x[1], reverse=True))
+    return forwarder_ranking
