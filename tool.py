@@ -337,7 +337,7 @@ def get_editors(data: dict) -> dict:
 
 def get_longest_messages(data: dict) -> list:
     """
-    Get the messages with the longest text from the JSON data, excluding forwarded messages.
+    Get the messages with the longest text from the JSON data
 
     Args:
     - data (dict): The JSON data.
@@ -349,7 +349,7 @@ def get_longest_messages(data: dict) -> list:
     max_length = 0
 
     for message in data.get('messages', []):
-        if 'forwarded_from' not in message:  # Exclude forwarded messages
+       
             text = message.get('text', '')
             length = len(text)
             if length > max_length:
@@ -362,7 +362,7 @@ def get_longest_messages(data: dict) -> list:
 
 def get_most_common_words(data: dict, top_n=10) -> list:
     """
-    Get the top N most common single words in the text key of messages, excluding forwarded messages.
+    Get the top N most common single words in the text key of messages
 
     Args:
     - data (dict): The JSON data.
@@ -374,7 +374,7 @@ def get_most_common_words(data: dict, top_n=10) -> list:
     words_count = Counter()
 
     for message in data.get('messages', []):
-        if 'forwarded_from' not in message: 
+        
             text = message.get('text', '')
             if isinstance(text, list):  
                 text = ' '.join(str(item) for item in text if isinstance(item, str))
@@ -390,8 +390,3 @@ def get_most_common_words(data: dict, top_n=10) -> list:
     for word, count in most_common_words:
         top_words_list.append({'word': word, 'occurrence': count})
     return top_words_list
-
-data = load_json('result.json')
-most_common_words = get_most_common_words(data)
-for word in most_common_words:
-    print(f"{word['word']}: {word['occurrence']}")
