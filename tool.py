@@ -472,3 +472,22 @@ def get_most_active_hours(data: dict) -> Counter:
         active_hours[message_date.hour] += 1
 
     return active_hours.most_common()
+
+def get_most_active_days(data: dict) -> Counter:
+    """
+    Calculates the most active days in the Telegram group.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+
+    Returns:
+    - active_days (Counter): A Counter object with days as keys and message counts as values.
+    """
+
+    active_days = Counter()
+
+    for message in data.get('messages', []):
+        message_date = datetime.fromisoformat(message['date'])
+        active_days[message_date.strftime('%Y-%m-%d')] += 1
+
+    return active_days.most_common()
