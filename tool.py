@@ -511,3 +511,23 @@ def get_most_active_weekdays(data: dict) -> Counter:
         active_weekdays[message_date.strftime('%A')] += 1
 
     return active_weekdays.most_common()
+
+def get_most_active_months(data: dict) -> Counter:
+    """
+    Calculates the most active months in the Telegram group.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+
+    Returns:
+    - active_months (Counter): A Counter object with months as keys and message counts as values.
+    """
+
+    active_months = Counter()
+
+ 
+    for message in data.get('messages', []):
+        message_date = datetime.fromisoformat(message['date'])
+        active_months[message_date.strftime('%Y-%m')] += 1
+
+    return active_months.most_common()
