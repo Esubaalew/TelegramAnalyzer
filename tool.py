@@ -109,3 +109,27 @@ def get_latest_message(data: dict) -> dict:
 
     latest_message['date'] = extract_date_info(latest_message)
     return latest_message
+
+
+def get_senders_list(data: dict) -> list:
+    """
+    Extracts the list of unique senders from the JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - senders_list (list): List of unique senders.
+    """
+    
+    unique_senders = set()
+
+
+    for message in data.get('messages', []):
+        sender_id = message.get('from')
+        unique_senders.add(sender_id)
+
+
+    senders_list = ['Deleted account' if sender is None else sender for sender in unique_senders]
+
+    return senders_list
