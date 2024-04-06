@@ -271,3 +271,64 @@ def get_repliers(data: dict) -> dict:
 
     replier_ranking = dict(sorted(replier_count.items(), key=lambda x: x[1], reverse=True))
     return replier_ranking
+
+
+def count_edited_messages(data: dict) -> int:
+    """
+    Count the number of edited messages in the JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - edited_count (int): The number of edited messages.
+    """
+    edited_count = 0
+
+    for message in data.get('messages', []):
+        if 'edited' in message:
+            edited_count += 1
+
+    return edited_count
+
+
+def get_edited_messages(data: dict) -> list:
+    """
+    Get a list of all edited messages from the JSON data.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - edited_messages (list): List of all edited messages.
+    """
+    edited_messages = []
+
+    for message in data.get('messages', []):
+        if 'edited' in message:
+            edited_messages.append(message)
+
+    return edited_messages
+
+
+def get_editors(data: dict) -> dict:
+    """
+    Get a ranking of editors based on the number of edited messages.
+
+    Args:
+    - data (dict): The JSON data.
+
+    Returns:
+    - editor_ranking (dict): Dictionary containing editors ranked by the number of edited messages.
+    """
+    editor_count = defaultdict(int)
+
+    for message in data.get('messages', []):
+        if 'edited' in message:
+            editor = message.get('from')
+            if editor is None:
+                editor = 'Deleted Account'
+            editor_count[editor] += 1
+
+    editor_ranking = dict(sorted(editor_count.items(), key=lambda x: x[1], reverse=True))
+    return editor_ranking
