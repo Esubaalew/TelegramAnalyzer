@@ -133,7 +133,7 @@ def get_senders(data: dict) -> list:
         else:
             sender_count[sender] += 1
 
-    # Sort the senders by the number of messages they sent
+
     senders_ranked = [{'sender': sender, 'messages': count} for sender, count in sorted(sender_count.items(), key=lambda x: x[1], reverse=True)]
     return senders_ranked
 
