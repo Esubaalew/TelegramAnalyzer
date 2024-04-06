@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from tool import get_most_active_users, load_json, get_senders, each_average_message_length
+import numpy as np
+from tool import get_most_active_hours, get_most_active_users, load_json, get_senders, each_average_message_length
 
 def visualize_most_active_users(data: dict, top_n: int = 10):
     """
@@ -129,5 +130,48 @@ def visualize_average_message_length(data: dict, top_n: int = 10):
     plt.gca().invert_yaxis() 
     plt.grid(axis='x', linestyle='--', alpha=0.7)
     plt.tight_layout()
+    plt.show()
+
+
+def visualize_most_active_hours(data: dict):
+    """
+    Visualize the most active hours in the Telegram group using a histogram with different colors.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+    """
+  
+    active_hours = get_most_active_hours(data)
+
+    
+    hours = [hour for hour, count in active_hours]
+    counts = [count for hour, count in active_hours]
+
+    
+    colormap = plt.cm.viridis  
+
+   
+    min_count = min(counts)
+    max_count = max(counts)
+    normalized_counts = [(count - min_count) / (max_count - min_count) for count in counts]
+
+    
+    plt.figure(figsize=(10, 6))
+    for hour, count, normalized_count in zip(hours, counts, normalized_counts):
+        color = colormap(normalized_count) 
+        plt.bar(hour, count, color=color)
+
+    plt.xlabel('Hour of Day')
+    plt.ylabel('Message Count')
+    plt.title('Most Active Hours in the Telegram Group')
+    plt.xticks(range(24))  
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+  
+    sm = plt.cm.ScalarMappable(cmap=colormap, norm=plt.Normalize(vmin=min_count, vmax=max_count))
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=plt.gca()) 
+    cbar.set_label('Message Count')
+
     plt.show()
 
