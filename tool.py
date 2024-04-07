@@ -600,3 +600,22 @@ def get_user_activity(data: dict) -> dict:
 #         most_active_count = counts['messages']
 #         print(f"Most active {time_dimension}: {most_active_time} (Messages: {most_active_count})")
 #     print()
+
+def get_most_active_year(data: dict) -> Counter:
+    """
+    Calculates the most active year in the Telegram group.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+
+    Returns:
+    - active_years (Counter): A Counter object with years as keys and message counts as values.
+    """
+
+    active_years = Counter()
+
+    for message in data.get('messages', []):
+        message_date = datetime.fromisoformat(message['date'])
+        active_years[message_date.strftime('%Y')] += 1
+
+    return active_years.most_common()
