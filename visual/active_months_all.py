@@ -1,7 +1,10 @@
 
 from datetime import datetime
+from matplotlib import cm
 import matplotlib.pyplot as plt
 import sys
+
+import numpy as np
 sys.path.append('../')
 from tool import get_most_active_months, get_most_active_months_all_time, load_json
 
@@ -121,6 +124,36 @@ def visualize_most_active_months_trend(data: dict):
     plt.show()
 
 
+
+def visualize_top_10_most_active_months(data: dict):
+  
+    active_months = get_most_active_months(data)
+
+    # Get the top 10 most active months
+    top_10_months = [month for month, _ in active_months[:10]]
+    top_10_message_counts = [count for _, count in active_months[:10]]
+
+   
+    colors = cm.viridis(np.linspace(0, 1, len(top_10_months)))
+
+    # Create the bar chart
+    fig, ax = plt.subplots(figsize=(12, 6))
+    bars = ax.bar(top_10_months, top_10_message_counts, color=colors)
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Message Count')
+    ax.set_title('Top 10 Most Active Months in the Telegram Group')
+    plt.xticks(rotation=45)
+
+    # Add a color bar
+    sm = plt.cm.ScalarMappable(cmap=cm.viridis, norm=plt.Normalize(vmin=0, vmax=max(top_10_message_counts)))
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax) 
+    cbar.set_label('Message Count')
+
+   
+    plt.tight_layout()
+    plt.show()
+
 # Example usage
 data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
 # visualize_bar_chart(data)
@@ -128,3 +161,4 @@ data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
 # visualize_area_chart(data)
 # visualize_pie_chart(data)
 # visualize_most_active_months_trend(data)
+# visualize_top_10_most_active_months(data)
