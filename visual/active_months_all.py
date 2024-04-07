@@ -1,8 +1,9 @@
 
+from datetime import datetime
 import matplotlib.pyplot as plt
 import sys
 sys.path.append('../')
-from tool import get_most_active_months_all_time, load_json
+from tool import get_most_active_months, get_most_active_months_all_time, load_json
 
 def visualize_bar_chart(data: dict):
     """
@@ -100,9 +101,30 @@ def visualize_pie_chart(data: dict):
     plt.show()
 
 
+def visualize_most_active_months_trend(data: dict):
+   
+    active_months = get_most_active_months(data)
+
+   
+    months = [datetime.strptime(month, '%Y-%m') for month, _ in active_months]
+    message_counts = [count for _, count in active_months]
+
+    # Plotting the trend using a line chart
+    plt.figure(figsize=(12, 6))
+    plt.plot(months, message_counts, marker='o', color='skyblue', linestyle='-')
+    plt.xlabel('Month')
+    plt.ylabel('Message Count')
+    plt.title('Trend of Most Active Months in the Telegram Group (Monthly)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.grid(True) 
+    plt.show()
+
+
 # Example usage
 data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
 # visualize_bar_chart(data)
 # visualize_line_chart(data)
 # visualize_area_chart(data)
 # visualize_pie_chart(data)
+# visualize_most_active_months_trend(data)
