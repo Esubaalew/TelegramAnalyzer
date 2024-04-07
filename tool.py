@@ -407,7 +407,7 @@ def get_most_active_users(data: dict, top_n: int = 10) -> list:
     for message in data.get('messages', []):
 
             sender = message.get('from')
-            if sender is None:  # Replace None with "Deleted User"
+            if sender is None:
                 sender = "Deleted Account"
             user_message_count[sender] += 1
 
