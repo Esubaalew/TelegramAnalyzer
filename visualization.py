@@ -6,30 +6,6 @@ import numpy as np
 from tool import get_most_active_days, get_most_active_hours, get_most_active_months_all_time, get_most_active_months_by_year, get_most_active_users, get_most_active_weekdays, get_most_active_year, load_json, get_senders, each_average_message_length
 
 
-def visualize_activity_over_time(data: dict):
-    """
-    Visualize the change in activity over time from the oldest day to the newest day using a line plot.
-
-    Args:
-    - data (dict): The JSON data from the Telegram group export.
-    """
- 
-    active_days = get_most_active_days(data)
-
-   
-    days = [datetime.strptime(day, '%Y-%m-%d') for day, count in active_days]
-    counts = [count for day, count in active_days]
-
-    # Plot the line plot
-    plt.figure(figsize=(12, 6))
-    plt.plot(days, counts, marker='o', linestyle='-')
-
-    plt.xlabel('Date')
-    plt.ylabel('Message Count')
-    plt.title('Change in Activity Over Time')
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
 
 def visualize_most_active_weekdays_pie(data: dict):
     """
