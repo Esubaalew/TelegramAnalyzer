@@ -53,4 +53,4 @@ def visualize_most_active_months_by_year(data: dict):
 
 data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
 
-# visualize_most_active_months_by_year(data)
+visualize_most_active_months_by_year(data)
