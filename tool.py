@@ -587,19 +587,6 @@ def get_user_activity(data: dict) -> dict:
 
     return formatted_user_activity
 
-# Example usage:
-# data = load_json('result.json')
-# user_activity = get_user_activity(data)
-# print(user_activity)
-
-# Print user activity information
-# for user, activity_info in user_activity.items():
-#     print(f"User: {user}")
-#     for time_dimension, counts in activity_info.items():
-#         most_active_time = counts['most_active']
-#         most_active_count = counts['messages']
-#         print(f"Most active {time_dimension}: {most_active_time} (Messages: {most_active_count})")
-#     print()
 
 def get_most_active_year(data: dict) -> Counter:
     """
