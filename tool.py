@@ -619,3 +619,31 @@ def get_most_active_year(data: dict) -> Counter:
         active_years[message_date.strftime('%Y')] += 1
 
     return active_years.most_common()
+
+
+def get_most_active_months_all_time(data: dict) -> list:
+    """
+    Calculates the most active months in the Telegram group for all months and all years.
+
+    Args:
+    - data (dict): The JSON data from the Telegram group export.
+
+    Returns:
+    - active_months_list (list): A list of dictionaries with 'name' and 'messages' as keys.
+    """
+
+    active_months = Counter()
+    month_names = {
+        '01': 'Jan', '02': 'Feb', '03': 'Mar', '04': 'Apr', '05': 'May', '06': 'Jun',
+        '07': 'Jul', '08': 'Aug', '09': 'Sep', '10': 'Oct', '11': 'Nov', '12': 'Dec'
+    }
+
+    for message in data.get('messages', []):
+        message_date = datetime.fromisoformat(message['date'])
+        month_num = message_date.strftime('%m')
+        active_months[month_names[month_num]] += 1
+
+
+    active_months_list = [{'name': month, 'messages': count} for month, count in active_months.items()]
+
+    return active_months_list
