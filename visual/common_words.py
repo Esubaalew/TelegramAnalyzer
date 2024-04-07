@@ -22,7 +22,3 @@ def visualize_most_common_words(data: dict, top_n: int = 10):
     plt.ylabel('Word')
     plt.title(f'Top {top_n} Most Common Words')
     plt.show()
-
-# Example usage
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_most_common_words(data, top_n=10)

@@ -196,14 +196,3 @@ def visualize_most_active_months_by_year(data: dict):
     plt.legend(title='Year')
     plt.tight_layout()
     plt.show()
-
-
-# Example usage
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_bar_chart(data)
-# visualize_line_chart(data)
-# visualize_area_chart(data)
-# visualize_pie_chart(data)
-# visualize_most_active_months_trend(data)
-# visualize_top_10_most_active_months(data)
-# visualize_most_active_months_by_year(data)

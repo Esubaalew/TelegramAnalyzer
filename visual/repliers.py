@@ -116,12 +116,3 @@ def visualize_area_chart_repliers(data: dict, top_n: int = 10):
     plt.tight_layout()
     plt.grid(True)
     plt.show()
-
-
-# Example usage
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_bar_chart_repliers(data, top_n=10)
-# visualize_pie_chart_repliers(data, top_n=6)
-# visualize_line_chart_repliers(data, top_n=45)
-# visualize_area_chart_repliers(data, top_n=10)
-# visualize_vertical_bar_chart_repliers(data, top_n=10)

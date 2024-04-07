@@ -64,8 +64,3 @@ def visualize_histogram(data: dict):
     plt.title('Distribution of Average Message Length for Each User (Histogram)')
     plt.tight_layout()
     plt.show()
-
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_bar_chart(data)
-# visualize_orizontal_bar(data)
-# visualize_histogram(data)

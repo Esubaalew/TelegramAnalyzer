@@ -31,7 +31,3 @@ def visualize_most_active_weekdays_pie(data: dict):
     plt.axis('equal')
     plt.title('Most Active Weekdays in the Telegram Group')
     plt.show()
-
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_most_active_weekdays_bar(data)
-# visualize_most_active_weekdays_pie(data)

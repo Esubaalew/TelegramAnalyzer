@@ -70,8 +70,3 @@ def visualize_message_trend_over_year_pie(data: dict):
     plt.axis('equal')
     plt.title('Message Distribution Over Years')
     plt.show()
-
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_message_trend_over_year(data)
-# visualize_message_trend_over_year_bar(data)
-# visualize_message_trend_over_year_pie(data)

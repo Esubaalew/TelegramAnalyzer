@@ -45,8 +45,3 @@ def visualize_line(data: dict):
     plt.xticks(range(24))  
     plt.grid(True, linestyle='--', alpha=0.7) 
     plt.show()
-
-
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_bar(data)
-# visualize_line(data)

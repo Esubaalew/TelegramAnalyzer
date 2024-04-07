@@ -125,10 +125,3 @@ def visualize__area_chart(data: dict, top_n: int = 10):
     plt.tight_layout()
     plt.grid(True)
     plt.show()
-
-# Example usage
-data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
-# visualize_bar_chart(data, top_n=10)
-# # visualize_pie_chart(data, top_n=10)
-# visualize_line__chart(data, top_n=10)
-# visualize__area_chart(data, top_n=10)
