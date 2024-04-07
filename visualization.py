@@ -7,54 +7,6 @@ from tool import get_most_active_days, get_most_active_hours, get_most_active_mo
 
 
 
-def visualize_most_active_weekdays_pie(data: dict):
-    """
-    Visualize the distribution of message activity across different weekdays using a pie chart.
-
-    Args:
-    - data (dict): The JSON data from the Telegram group export.
-    """
-   
-    active_weekdays = get_most_active_weekdays(data)
-
-   
-    weekdays = [day for day, count in active_weekdays]
-    counts = [count for day, count in active_weekdays]
-
-    # Plot the pie chart
-    plt.figure(figsize=(8, 8))
-    plt.pie(counts, labels=weekdays, autopct='%1.1f%%', startangle=140, colors=plt.cm.tab10.colors)
-    plt.title('Distribution of Message Activity Across Weekdays')
-    plt.axis('equal') 
-
-    plt.show()
-
-
-def visualize_message_activity_over_year(data: dict):
-    """
-    Visualize the change in message activity over time using a line plot.
-
-    Args:
-    - data (dict): The JSON data from the Telegram group export.
-    """
-    active_years_data = get_most_active_year(data)
-   
-    sorted_years = sorted(active_years_data)
-    years, message_counts = zip(*sorted_years)
-
-
-    # Plotting
-    plt.figure(figsize=(10, 5))
-    plt.plot(years, message_counts, marker='o')
-    plt.title('Number of Messages Over Time')
-    plt.xlabel('Year')
-    plt.ylabel('Number of Messages')
-    plt.grid(True)
-    plt.xticks(rotation=45)
-    plt.tight_layout()
-    plt.show()
-
-
 def visualize_most_active_months_by_year(data: dict):
     """
     Visualize the most active months in the Telegram group for each year using a grouped bar plot and export the data.
@@ -97,3 +49,8 @@ def visualize_most_active_months_by_year(data: dict):
     plt.legend(title='Year')
     plt.tight_layout()
     plt.show()
+
+
+data = load_json(r'D:\PlayingWithPython\TelegramAnalyzer\result.json')
+
+# visualize_most_active_months_by_year(data)
