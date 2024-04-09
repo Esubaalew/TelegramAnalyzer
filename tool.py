@@ -3,8 +3,10 @@ from datetime import datetime
 from collections import defaultdict
 from collections import Counter
 import re
+from typing import Any, List, Tuple
 
-def load_json(file_path: str = 'result.json') -> dict:
+
+def load_json(file_path: str = 'result.json') -> Any | None:
     """
     Load JSON data from the specified file path.
 
@@ -46,6 +48,7 @@ def chat_info(data: dict) -> dict:
 
     return chat_info
 
+
 def get_oldest_message(data: dict) -> dict:
     """
     Retrieves the oldest message from the JSON data.
@@ -56,9 +59,9 @@ def get_oldest_message(data: dict) -> dict:
     Returns:
     - oldest_message (dict): Dictionary containing the oldest message with full timestamp.
     """
-    
+
     oldest_message = {'date': '9999-12-31T23:59:59'}
-    
+
     for message in data.get('messages', []):
         if 'date' in message and message['date'] < oldest_message['date']:
             oldest_message = message
@@ -93,6 +96,7 @@ def extract_date_info(message: dict) -> dict:
 
     return date_info
 
+
 def get_latest_message(data: dict) -> dict:
     """
     Retrieves the latest message from the JSON data.
@@ -104,7 +108,6 @@ def get_latest_message(data: dict) -> dict:
     - latest_message (dict): Dictionary containing the latest message with full timestamp.
     """
     latest_message = {'date': '0000-01-01T00:00:00'}
-    
 
     for message in data.get('messages', []):
         if 'date' in message and message['date'] > latest_message['date']:
@@ -127,15 +130,15 @@ def get_senders(data: dict) -> list:
     sender_count = defaultdict(int)
 
     for message in data.get('messages', []):
-        sender = message.get('from')
-        if sender is None:
-            sender_count['Deleted Account'] += 1
-        else:
+        if 'from' in message:
+            sender = message['from']
+            sender = sender if sender is not None else 'Deleted Account'
             sender_count[sender] += 1
 
-
-    senders_ranked = [{'sender': sender, 'messages': count} for sender, count in sorted(sender_count.items(), key=lambda x: x[1], reverse=True)]
+    senders_ranked = [{'sender': sender, 'messages': count} for sender, count in
+                      sorted(sender_count.items(), key=lambda x: x[1], reverse=True)]
     return senders_ranked
+
 
 def count_forwarded_messages(data: dict) -> int:
     """
@@ -152,6 +155,7 @@ def count_forwarded_messages(data: dict) -> int:
         if 'forwarded_from' in message:
             count += 1
     return count
+
 
 def get_forwarded_messages(data: dict) -> list:
     """
@@ -188,8 +192,10 @@ def get_forwarders(data: dict) -> dict:
             forwarder = forwarder if forwarder is not None else 'Deleted Account'
             forwarder_count[forwarder] += 1
 
-    forwarder_ranking = dict(sorted(forwarder_count.items(), key=lambda x: x[1], reverse=True))
+    sorted_forwarders = sorted(forwarder_count.items(), key=lambda x: x[1], reverse=True)[:100]
+    forwarder_ranking = dict(sorted_forwarders)
     return forwarder_ranking
+
 
 def get_forward_sources(data: dict) -> dict:
     """
@@ -211,9 +217,10 @@ def get_forward_sources(data: dict) -> dict:
             forward_source = forward_source if forward_source is not None else 'Deleted Account'
             forward_sources_count[forward_source] += 1
 
-    sorted_forward_sources_count = dict(sorted(forward_sources_count.items(), key=lambda x: x[1], reverse=True))
+    sorted_forward_sources = sorted(forward_sources_count.items(), key=lambda x: x[1], reverse=True)[:100]
+    forward_sources_count = dict(sorted_forward_sources)
 
-    return sorted_forward_sources_count
+    return forward_sources_count
 
 
 def count_replies(data: dict) -> int:
@@ -271,7 +278,8 @@ def get_repliers(data: dict) -> dict:
         if 'reply_to_message_id' in message:
             replier_count[replier] += 1
 
-    replier_ranking = dict(sorted(replier_count.items(), key=lambda x: x[1], reverse=True))
+    sorted_repliers = sorted(replier_count.items(), key=lambda x: x[1], reverse=True)[:100]
+    replier_ranking = dict(sorted_repliers)
     return replier_ranking
 
 
@@ -332,8 +340,10 @@ def get_editors(data: dict) -> dict:
                 editor = 'Deleted Account'
             editor_count[editor] += 1
 
-    editor_ranking = dict(sorted(editor_count.items(), key=lambda x: x[1], reverse=True))
+    sorted_editors = sorted(editor_count.items(), key=lambda x: x[1], reverse=True)[:100]
+    editor_ranking = dict(sorted_editors)
     return editor_ranking
+
 
 def get_longest_messages(data: dict) -> list:
     """
@@ -349,16 +359,17 @@ def get_longest_messages(data: dict) -> list:
     max_length = 0
 
     for message in data.get('messages', []):
-       
-            text = message.get('text', '')
-            length = len(text)
-            if length > max_length:
-                longest_messages = [{'text': text, 'sender': message.get('from', 'Unknown')}]
-                max_length = length
-            elif length == max_length:
-                longest_messages.append({'text': text, 'sender': message.get('from', 'Unknown')})
+
+        text = message.get('text', '')
+        length = len(text)
+        if length > max_length:
+            longest_messages = [{'text': text, 'sender': message.get('from', 'Unknown')}]
+            max_length = length
+        elif length == max_length:
+            longest_messages.append({'text': text, 'sender': message.get('from', 'Unknown')})
 
     return longest_messages
+
 
 def get_most_common_words(data: dict, top_n=10) -> list:
     """
@@ -374,22 +385,23 @@ def get_most_common_words(data: dict, top_n=10) -> list:
     words_count = Counter()
 
     for message in data.get('messages', []):
-        
-            text = message.get('text', '')
-            if isinstance(text, list):  
-                text = ' '.join(str(item) for item in text if isinstance(item, str))
-            elif isinstance(text, dict): 
-               
-                text = str(text)
-            
-            words = re.findall(r'\b\w+\b', text.lower())
-            words_count.update(words)
+
+        text = message.get('text', '')
+        if isinstance(text, list):
+            text = ' '.join(str(item) for item in text if isinstance(item, str))
+        elif isinstance(text, dict):
+
+            text = str(text)
+
+        words = re.findall(r'\b\w+\b', text.lower())
+        words_count.update(words)
 
     most_common_words = words_count.most_common(top_n)
     top_words_list = []
     for word, count in most_common_words:
         top_words_list.append({'word': word, 'occurrence': count})
     return top_words_list
+
 
 def get_most_active_users(data: dict, top_n: int = 10) -> list:
     """
@@ -405,12 +417,10 @@ def get_most_active_users(data: dict, top_n: int = 10) -> list:
     user_message_count = defaultdict(int)
 
     for message in data.get('messages', []):
-
-            sender = message.get('from')
-            if sender is None:
-                sender = "Deleted Account"
+        if 'from' in message:
+            sender = message['from']
+            sender = sender if sender is not None else 'Deleted Account'
             user_message_count[sender] += 1
-
     sorted_users = sorted(user_message_count.items(), key=lambda x: x[1], reverse=True)[:top_n]
     top_active_users = [{'user': user, 'message_count': count} for user, count in sorted_users]
 
@@ -433,8 +443,6 @@ def get_average_message_length(data):
     return average_length
 
 
-
-
 def each_average_message_length(data: dict) -> dict:
     from collections import defaultdict
     user_lengths = defaultdict(int)
@@ -443,16 +451,16 @@ def each_average_message_length(data: dict) -> dict:
     for message in data.get('messages', []):
         if 'from' in message:
             message_text = message.get('text', '')
-            message_length = len(message_text) if isinstance(message_text, str) else sum(len(part['text']) for part in message_text if isinstance(part, dict))
+            message_length = len(message_text) if isinstance(message_text, str) else sum(
+                len(part['text']) for part in message_text if isinstance(part, dict))
             user_lengths[message['from']] += message_length
             user_counts[message['from']] += 1
 
-    
     average_lengths = {user: user_lengths[user] / user_counts[user] for user in user_lengths}
     return average_lengths
 
 
-def get_most_active_hours(data: dict) -> Counter:
+def get_most_active_hours(data: dict) -> list[tuple[Any, int]]:
     """
     Calculates the most active hours in the Telegram group.
 
@@ -465,15 +473,14 @@ def get_most_active_hours(data: dict) -> Counter:
 
     active_hours = Counter()
 
-
     for message in data.get('messages', []):
-    
         message_date = datetime.fromisoformat(message['date'])
         active_hours[message_date.hour] += 1
 
     return active_hours.most_common()
 
-def get_most_active_days(data: dict) -> Counter:
+
+def get_most_active_days(data: dict) -> list[tuple[Any, int]]:
     """
     Calculates the most active days in the Telegram group.
 
@@ -492,7 +499,8 @@ def get_most_active_days(data: dict) -> Counter:
 
     return active_days.most_common()
 
-def get_most_active_weekdays(data: dict) -> Counter:
+
+def get_most_active_weekdays(data: dict) -> list[tuple[Any, int]]:
     """
     Calculates the most active weekdays in the Telegram group.
 
@@ -502,17 +510,17 @@ def get_most_active_weekdays(data: dict) -> Counter:
     Returns:
     - active_weekdays (Counter): A Counter object with weekdays as keys and message counts as values.
     """
-    
+
     active_weekdays = Counter()
 
-   
     for message in data.get('messages', []):
         message_date = datetime.fromisoformat(message['date'])
         active_weekdays[message_date.strftime('%A')] += 1
 
     return active_weekdays.most_common()
 
-def get_most_active_months(data: dict) -> Counter:
+
+def get_most_active_months(data: dict) -> list[tuple[Any, int]]:
     """
     Calculates the most active months in the Telegram group.
 
@@ -525,12 +533,12 @@ def get_most_active_months(data: dict) -> Counter:
 
     active_months = Counter()
 
- 
     for message in data.get('messages', []):
         message_date = datetime.fromisoformat(message['date'])
         active_months[message_date.strftime('%Y-%m')] += 1
 
     return active_months.most_common()
+
 
 def get_user_activity(data: dict) -> dict:
     """
@@ -543,10 +551,10 @@ def get_user_activity(data: dict) -> dict:
     - user_activity (dict): Dictionary containing user activity information.
     """
 
-    user_activity = defaultdict(lambda: defaultdict(Counter)) 
+    user_activity = defaultdict(lambda: defaultdict(Counter))
 
     for message in data.get('messages', []):
-        sender = message.get('from', 'Deleted Account')  
+        sender = message.get('from', 'Deleted Account')
         timestamp = message.get('date')
         if sender and timestamp:
             message_date = datetime.fromisoformat(timestamp)
@@ -555,12 +563,10 @@ def get_user_activity(data: dict) -> dict:
             weekday = message_date.strftime('%A')
             month = message_date.strftime('%Y-%m')
 
-           
             user_activity[sender]['Hour'][hour] += 1
             user_activity[sender]['Day'][day] += 1
             user_activity[sender]['Weekday'][weekday] += 1
             user_activity[sender]['Month'][month] += 1
-
 
     formatted_user_activity = {}
     for user, activity_info in user_activity.items():
@@ -577,7 +583,7 @@ def get_user_activity(data: dict) -> dict:
                 'most_active': most_active_time,
                 'messages': most_active_count
             }
-    
+
         overall_activity = sum(sum(counter.values()) for counter in activity_info.values())
         formatted_activity_info['Overall'] = {
             'most_active': 'N/A' if overall_activity == 0 else 'Overall',
@@ -588,7 +594,7 @@ def get_user_activity(data: dict) -> dict:
     return formatted_user_activity
 
 
-def get_most_active_year(data: dict) -> Counter:
+def get_most_active_year(data: dict) -> list[tuple[Any, int]]:
     """
     Calculates the most active year in the Telegram group.
 
@@ -630,10 +636,10 @@ def get_most_active_months_all_time(data: dict) -> list:
         month_num = message_date.strftime('%m')
         active_months[month_names[month_num]] += 1
 
-
-    active_months_list = [{'name': month, 'messages': count} for month, count in active_months.items()]
+    active_months_list = sorted([{'name': month, 'messages': count} for month, count in active_months.items()], key=lambda x: x['messages'], reverse=True)
 
     return active_months_list
+
 
 def get_most_active_months_by_year(data: dict) -> dict:
     """
@@ -664,7 +670,6 @@ def get_most_active_months_by_year(data: dict) -> dict:
 
         active_months_by_year[year][month_name] += 1
 
-    
     for year, months_counter in active_months_by_year.items():
         active_months_by_year[year] = [{'name': month, 'messages': count} for month, count in months_counter.items()]
 
